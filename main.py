@@ -43,8 +43,8 @@ def preprocess_data(df_single_household, df_total_households):
 df_combined = preprocess_data(df_single_household, df_total_households)
 
 # 📌 Streamlit UI
-st.title("🏙️ 지속가능한 도시와 1인 세대 비율 분석")
-st.subheader("📌 SDG 11번 목표와 1인 세대 증가의 연관성")
+st.markdown("<h3 style='text-align: center;'>🏙️ 지속가능한 도시와 1인 세대 비율 분석</h3>", unsafe_allow_html=True)
+st.subheader("📌 SDG 11번 목표와 1인 세대 증가의 연관성 분석 프로젝트")
 
 st.markdown("""
     지속가능한 도시(SDG 11)의 목표는 **모든 사람을 위한 포용적이고 안전하며 회복력 있고 지속가능한 도시와 공동체를 만드는 것**입니다.  
