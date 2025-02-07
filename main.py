@@ -9,8 +9,8 @@ def load_data():
     file_path_single_household = "data11.csv"  # 1인 세대 데이터
     file_path_total_households = "data22.csv"  # 전체 세대 데이터
 
-    df_single_household = pd.read_csv(file_path_single_household, encoding='utf-8')
-    df_total_households = pd.read_csv(file_path_total_households, encoding='utf-8')
+    df_single_household = pd.read_csv(file_path_single_household, low_memory=False, encoding='utf-8')
+    df_total_households = pd.read_csv(file_path_total_households, low_memory=False, encoding='utf-8')
 
     return df_single_household, df_total_households
 
