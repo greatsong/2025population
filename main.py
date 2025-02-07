@@ -43,7 +43,7 @@ def preprocess_data(df_single_household, df_total_households):
 df_combined = preprocess_data(df_single_household, df_total_households)
 
 # 📌 Streamlit UI
-st.markdown("<h3 style='text-align: center;'>🏙️ 지속가능한 도시와 1인 세대 비율 분석</h3>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>🏙️ 지속가능한 도시와 1인 세대 비율 분석</h2>", unsafe_allow_html=True)
 st.subheader("📌 SDG 11번 목표와 1인 세대 증가의 연관성 분석 프로젝트")
 
 st.markdown("""
