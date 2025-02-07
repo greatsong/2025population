@@ -43,6 +43,7 @@ df_combined = preprocess_data(df_single_household, df_total_households)
 
 # 📌 Streamlit UI
 st.title("📊전국 및 서울특별시 1인 가구 분석")
+st.write("🌇지속가능한 도시를 만들어가는 SDGs 프로젝트!🌇")
 
 # 전국 / 서울 선택
 region_option = st.radio("📍 지역 선택", ["전국", "서울특별시"])
