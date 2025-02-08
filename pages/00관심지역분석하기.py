@@ -9,8 +9,8 @@ def load_data():
     file_path_single_household = "data11.csv"  # 1인 세대 데이터
     file_path_total_households = "data22.csv"  # 전체 세대 데이터
 
-    df_single_household = pd.read_csv(file_path_single_household, encoding='utf-8')
-    df_total_households = pd.read_csv(file_path_total_households, encoding='utf-8')
+    df_single_household = pd.read_csv(file_path_single_household, encoding='utf-8', low_memory=False)
+    df_total_households = pd.read_csv(file_path_total_households, encoding='utf-8', low_memory=False)
 
     return df_single_household, df_total_households
 
@@ -43,16 +43,16 @@ def preprocess_data(df_single_household, df_total_households):
 df_combined = preprocess_data(df_single_household, df_total_households)
 
 # 📌 Streamlit UI
-st.title("📊 연령별 1인 세대 비율 분석 및 유사 지역 추천")
+st.markdown("<h3 style='text-align: center;'>🏙️ 연령별 1인 세대 비율 분석 및 유사 지역 추천</h3>", unsafe_allow_html=True)
 
 # 📍 지역 선택
-region_option = st.radio("📍 지역 선택", ["전국", "서울특별시"])
+region_option = st.radio("📍 분석할 지역", ["전국", "서울특별시"])
 
 # 👥 남녀 구분 선택
 gender_option = st.radio("👥 분석 대상", ["합산", "남성", "여성"])
 
-# 🎯 연령 선택
-age_options = ["전체"] + [f"{i}세" for i in range(20, 80, 5)]
+# 🎯 연령 선택 (0세부터 100세 이상까지 모든 나이 선택 가능)
+age_options = ["전체"] + [f"{i}세" for i in range(101)] + ["100세 이상"]
 selected_age = st.selectbox("🎯 연령 선택", age_options)
 
 # 선택된 데이터 필터링
@@ -69,9 +69,14 @@ column_map = {
 }
 selected_column = column_map[gender_option]
 
-# 🎯 연령대 필터링
+# 🎯 연령대 필터링 (0세~100세 이상 선택 가능)
 if selected_age != "전체":
-    age_col = f"2025년01월_{selected_age}_세대수"
+    if selected_age == "100세 이상":
+        age_col = "2025년01월_100세이상_세대수"
+    else:
+        age_num = int(selected_age.replace("세", ""))
+        age_col = f"2025년01월_{age_num}세_세대수"
+
     if age_col in df_filtered.columns:
         df_filtered = df_filtered[df_filtered[age_col] > 0]
 
