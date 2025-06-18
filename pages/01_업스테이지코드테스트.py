@@ -11,18 +11,19 @@ def load_data():
     try:
         df = pd.read_csv("202504_202504_연령별인구현황_남녀합계.csv", encoding='euc-kr')
         
-        # 컬럼명 재설정
+        # 컬럼명 재설정 (실제 컬럼 수에 맞춰 조정)
         num_columns = len(df.columns)
         population_columns = [f"인구_{i}" for i in range(1, num_columns - 1)]
         df.columns = ["지역명"] + population_columns + ["총인구"]
         
         # 숫자 데이터 변환 (콤마 제거)
         for col in population_columns:
-            df[col] = pd.to_numeric(df[col].str.replace(",", ""), errors='coerce')
+            df[col] = pd.to_numeric(df[col].astype(str).str.replace(",", "", regex=False), errors='coerce')
         df.fillna(0, inplace=True)
         
         # 총인구 컬럼 변환
-        df["총인구"] = df["총인구"].str.replace(",", "").astype(int)
+        df["총인구"] = df["총인구"].astype(str).str.replace(",", "", regex=False)
+        df["총인구"] = pd.to_numeric(df["총인구"], errors='coerce')
         
         return df, population_columns
     except Exception as e:
@@ -40,9 +41,6 @@ if df.empty:
 if "총인구" not in df.columns:
     st.error("데이터에 '총인구' 컬럼이 없습니다.")
     st.stop()
-
-# 총인구 컬럼을 숫자로 변환
-df["총인구"] = pd.to_numeric(df["총인구"], errors='coerce')
 
 # 사이드바 필터
 st.sidebar.header("📊 필터 설정")
@@ -68,15 +66,18 @@ else:
 
 # 🌍 지역별 총인구 비교 (상위 10개)
 st.subheader("🏆 지역별 총인구 순위 (Top 10)")
-top_regions = df.nlargest(10, "총인구")
-fig_top = px.bar(
-    top_regions,
-    x="지역명",
-    y="총인구",
-    title="지역별 총인구 Top 10",
-    template="plotly_white"
-)
-st.plotly_chart(fig_top)
+if "총인구" in df.columns:
+    top_regions = df.nlargest(10, "총인구")
+    fig_top = px.bar(
+        top_regions,
+        x="지역명",
+        y="총인구",
+        title="지역별 총인구 Top 10",
+        template="plotly_white"
+    )
+    st.plotly_chart(fig_top)
+else:
+    st.write("총인구 데이터를 표시할 수 없습니다.")
 
 # 📊 데이터 샘플 표시
 st.subheader("📄 원본 데이터 샘플")
