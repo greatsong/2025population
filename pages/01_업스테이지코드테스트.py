@@ -33,6 +33,14 @@ df, population_columns = load_data()
 if df.empty:
     st.stop()  # 데이터 없으면 실행 중단
 
+# 데이터 타입 확인
+if "총인구" not in df.columns:
+    st.error("데이터에 '총인구' 컬럼이 없습니다.")
+    st.stop()
+
+# 총인구 컬럼을 숫자로 변환
+df["총인구"] = pd.to_numeric(df["총인구"], errors='coerce')
+
 # 사이드바 필터
 st.sidebar.header("📊 필터 설정")
 selected_region = st.sidebar.selectbox("지역 선택", df["지역명"].unique())
