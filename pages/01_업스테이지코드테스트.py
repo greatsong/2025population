@@ -8,23 +8,19 @@ st.title("🔍 지역별 인구 현황 분석 대시보드")
 # 데이터 로드 함수
 @st.cache_data
 def load_data():
-    try:
-        df = pd.read_csv("202504_202504_연령별인구현황_남녀합계.csv", encoding='euc-kr')
-        
-        # 컬럼명 재설정 (실제 컬럼 수에 맞춰 조정)
-        num_columns = len(df.columns)
-        population_columns = [f"인구_{i}" for i in range(1, num_columns - 1)]
-        df.columns = ["지역명"] + population_columns + ["총인구"]
-        
-        # 숫자 데이터 변환
-        for col in population_columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-        df.fillna(0, inplace=True)
-        
-        return df, population_columns
-    except Exception as e:
-        st.error(f"데이터 로드 실패: {e}")
-        return pd.DataFrame(), []
+    df = pd.read_csv("202504_202504_연령별인구현황_남녀합계.csv", encoding='euc-kr')
+    
+    # 컬럼명 재설정
+    num_columns = len(df.columns)
+    population_columns = [f"인구_{i}" for i in range(1, num_columns - 1)]
+    df.columns = ["지역명"] + population_columns + ["총인구"]
+    
+    # 숫자 데이터 변환
+    for col in population_columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    df.fillna(0, inplace=True)
+    
+    return df, population_columns
 
 # 데이터 로드
 df, population_columns = load_data()
@@ -32,14 +28,6 @@ df, population_columns = load_data()
 # 데이터 확인
 if df.empty:
     st.stop()  # 데이터 없으면 실행 중단
-
-# 데이터 타입 확인
-if "총인구" not in df.columns:
-    st.error("데이터에 '총인구' 컬럼이 없습니다.")
-    st.stop()
-
-# 총인구 컬럼을 숫자로 변환
-df["총인구"] = pd.to_numeric(df["총인구"], errors='coerce')
 
 # 사이드바 필터
 st.sidebar.header("📊 필터 설정")
@@ -50,18 +38,21 @@ filtered_df = df[df["지역명"] == selected_region]
 
 # 📈 인터랙티브 막대 그래프 (연령대별 인구)
 if not filtered_df.empty:
-    region_data = filtered_df.iloc[0]
+    # pd.melt()로 데이터 재구성
+    bar_df = pd.melt(
+        filtered_df,
+        id_vars=["지역명"],
+        value_vars=population_columns,
+        var_name="연령대",
+        value_name="인구"
+    )
     
-    # Plotly 호환 형식으로 데이터 재구성
-    bar_df = pd.DataFrame({
-        "연령대": population_columns,
-        "인구": region_data[population_columns].values
-    })
-    
+    # Plotly 그래프 생성
     fig_bar = px.bar(
         bar_df,
         x="연령대",
         y="인구",
+        color="연령대",
         title=f"{selected_region} 연령대별 인구 분포",
         labels={"x": "연령대", "y": "인구 수"},
         template="plotly_white"
