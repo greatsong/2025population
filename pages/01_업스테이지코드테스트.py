@@ -11,15 +11,18 @@ def load_data():
     try:
         df = pd.read_csv("202504_202504_연령별인구현황_남녀합계.csv", encoding='euc-kr')
         
-        # 컬럼명 재설정 (실제 컬럼 수에 맞춰 조정)
+        # 컬럼명 재설정
         num_columns = len(df.columns)
         population_columns = [f"인구_{i}" for i in range(1, num_columns - 1)]
         df.columns = ["지역명"] + population_columns + ["총인구"]
         
-        # 숫자 데이터 변환
+        # 숫자 데이터 변환 (콤마 제거)
         for col in population_columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
+            df[col] = pd.to_numeric(df[col].str.replace(",", ""), errors='coerce')
         df.fillna(0, inplace=True)
+        
+        # 총인구 컬럼 변환
+        df["총인구"] = df["총인구"].str.replace(",", "").astype(int)
         
         return df, population_columns
     except Exception as e:
