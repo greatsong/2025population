@@ -16,10 +16,10 @@ def load_data():
     population_columns = [f"인구_{i}" for i in range(1, num_columns - 1)]
     df.columns = ["지역명"] + population_columns + ["총인구"]
     
-    return df
+    return df, population_columns  # 컬럼명도 함께 반환
 
-# 데이터 로드
-df = load_data()
+# 데이터 로드 및 컬럼명 추출
+df, population_columns = load_data()
 
 # 사이드바 필터
 st.sidebar.header("📊 필터 설정")
