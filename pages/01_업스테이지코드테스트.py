@@ -8,7 +8,7 @@ st.title("🔍 지역별 인구 현황 분석 대시보드")
 # 데이터 로드 (실제 파일 경로로 수정 필요)
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data01.csv")
+    df = pd.read_csv("202504_202504_연령별인구현황_남녀합계.csv")
     # 컬럼명이 깨져 있을 경우 직접 지정
     df.columns = ["지역명"] + [f"인구_{i}" for i in range(1, 101)] + ["총인구"]
     return df
