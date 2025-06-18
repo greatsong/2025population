@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-
 # 제목 설정
 st.title("지역별 인구 현황 분석")
 
